@@ -41,10 +41,12 @@ public class GUI2048 extends JFrame{
         add(statusBar, BorderLayout.SOUTH);
     }
 
+    /* kalo menang, tampilkan statusbar menang */
     void win() {
         statusBar.setText(WIN_MSG);
     }
-
+    
+    /* kalo kalah, tampilkan statusbar kalah */
     void lose() {
         statusBar.setText(LOSE_MSG);
     }
