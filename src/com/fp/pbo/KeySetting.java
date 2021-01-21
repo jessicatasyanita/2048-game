@@ -18,7 +18,7 @@ import java.util.HashMap;
 
 public class KeySetting extends KeyAdapter{
 
-	private static final HashMap<Integer, Method> keyMapping = new HashMap<>();
+    private static final HashMap<Integer, Method> keyMapping = new HashMap<>();
 
     private static Integer[] KEYS = { VK_UP, VK_DOWN, VK_LEFT, VK_RIGHT, VK_R };
 
@@ -35,15 +35,12 @@ public class KeySetting extends KeyAdapter{
         return INSTANCE;
     }
 
-
     private KeySetting() {
         initKey(KEYS);
         initKey(VI_KEY);
     }
 
-    /**
-     * initialize keycode in the kcs array.
-     */
+    /* inisialisasi keycode nya ke array kcs */
     void initKey(Integer[] kcs) {
         for (int i = 0; i < kcs.length; i++) {
             try {
@@ -54,9 +51,6 @@ public class KeySetting extends KeyAdapter{
         }
     }
 
-    /**
-     * Use reflect to invoke the mapping method.
-     */
     @Override
     public void keyPressed(KeyEvent k) {
         super.keyPressed(k);
@@ -72,7 +66,7 @@ public class KeySetting extends KeyAdapter{
                 | IllegalArgumentException e) {
             e.printStackTrace();
         }
-        if (!board.canMove()) {  // can not move, game over
+        if (!board.canMove()) {  // kalo board penuh gabisa gerak lagi, game over
             board.host.lose();
         }
 
