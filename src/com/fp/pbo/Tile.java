@@ -12,9 +12,7 @@ public class Tile {
     private final static HashMap<Integer, Tile> cache = new HashMap<>();
     
 
-    /**
-     * Frequently used tile, reuse these whenever possible
-     */
+   
     public final static Tile ZERO = new Tile(_0);
     public final static Tile TWO = new Tile(_2);
     public final static Tile FOUR = new Tile(_4);
@@ -42,9 +40,7 @@ public class Tile {
         val = v;
     }
 
-    /*
-     * factory method to get Tile instance
-     */
+   
     public static Tile valueOf(int num) {
         return cache.get(num);
     }
