@@ -11,10 +11,9 @@ import javax.swing.JPanel;
 
 
 public class Board extends JPanel {
-	//private static final long serialVersionUID = -1790261785521495991L;
-    /* Board row and column */
+    /* row dan column untuk board game nya bernilai 4 */
     public static final int ROW = 4;
-    /* this array use for convenience iterate */
+    /* _0123 array supaya iterasi nya mudah */
     public static final int[] _0123 = { 0, 1, 2, 3 };
 
     final GUI2048 host;
@@ -22,18 +21,16 @@ public class Board extends JPanel {
     private Tile[] tiles;
     
     private int scoreBoard=0;
-
+    /* goals dari game nya ketika value = 2048 */
     public static Value GOAL = Value._2048;
-
+    
     public Board(GUI2048 f) {
         host = f;
         setFocusable(true);
         initTiles();
     }
 
-    /**
-     * initialize the game, also use to start a new game
-     */
+    /*untuk memulai permainan*/
     public void initTiles() {
         tiles = new Tile[ROW * ROW];
         for (int i = 0; i < tiles.length; i++) {
@@ -44,81 +41,58 @@ public class Board extends JPanel {
         host.statusBar.setText("");
     }
 
-    /**
-     * move all the tiles to the left side.
-     */
+    /*untuk gerakan ke kiri*/
     public void left() {
         boolean needAddTile = false;
         for (int i : _0123) {
-            // get i-th line
+            // get line ke-i
             Tile[] origin = getLine(i);
-            // get the line have been moved to left
+            // get line setelah pergerakan ke kiri
             Tile[] afterMove = moveLine(origin);
-            // get the the line after
+            // get line setelahnya
             Tile[] merged = mergeLine(afterMove);
-            // set i-th line with the merged line
+            // set line ke-i dengan line yang telah di merged
             setLine(i, merged);
             if (!needAddTile && !Arrays.equals(origin, merged)) {
-                // if origin and merged line is different
-                // need to add a new Tile in the board
+                // apabila line awal dan merge line berbeda, maka addTile
                 needAddTile = true;
             }
         }
-
-        // if needAddTile is false, those line didn't change
-        // then no need to add tile
         if (needAddTile) {
             addTile();
         }
     }
 
-    /**
-     * move tiles to the right side.
-     */
     public void right() {
         tiles = rotate(180);
         left();
         tiles = rotate(180);
     }
 
-    /**
-     * move tiles up.
-     */
     public void up() {
         tiles = rotate(270);
         left();
         tiles = rotate(90);
     }
 
-    /**
-     * move tiles down.
-     */
     public void down() {
         tiles = rotate(90);
         left();
         tiles = rotate(270);
     }
 
-    /**
-     * get the Tile which at tiles[x + y * ROW ]
-     */
+    /* get tile pada lokasi tiles[x + y * 4] */
     private Tile tileAt(int x, int y) {
         return tiles[x + y * ROW];
     }
 
-    /**
-     * Generate a new Tile in the availableSpace.
-     */
+    /* addTile di space yg kosong */
     private void addTile() {
         List<Integer> list = availableIndex();
         int idx = list.get((int) (Math.random() * list.size()));
         tiles[idx] = Tile.randomTile();
     }
 
-    /**
-     * Query the tiles Array field, and get the list of empty tile's index. aka
-     * find the index is ok to add a new Tile.
-     */
     private List<Integer> availableIndex() {
         List<Integer> list = new LinkedList<>();
         for (int i = 0; i < tiles.length; i++) {
@@ -128,16 +102,12 @@ public class Board extends JPanel {
         return list;
     }
 
-    /**
-     * return true if the board doesn't have empty tile
-     */
+    /* board game tidak memiliki tile kosong --> true */
     private boolean isFull() {
         return availableIndex().size() == 0;
     }
 
-    /**
-     * return true if didn't lose
-     */
+    /* true apabila blm kalah */
     boolean canMove() {
         if (!isFull()) {
             return true;
@@ -154,11 +124,6 @@ public class Board extends JPanel {
         return false;
     }
 
-    /**
-     * rotate the tiles dgr degree, clockwise.
-     *
-     * @return Tile[], the tiles after rotate.
-     */
     private Tile[] rotate(int dgr) {
         Tile[] newTiles = new Tile[ROW * ROW];
         int offsetX = 3, offsetY = 3;
@@ -168,8 +133,7 @@ public class Board extends JPanel {
         } else if (dgr == 270) {
             offsetX = 0;
         } else {
-            throw new IllegalArgumentException(
-                    "Only can rotate 90, 180, 270 degree");
+            throw new IllegalArgumentException("Only can rotate 90, 180, 270 degree");
         }
         double radians = Math.toRadians(dgr);
         int cos = (int) Math.cos(radians);
@@ -184,9 +148,7 @@ public class Board extends JPanel {
         return newTiles;
     }
 
-    /**
-     * move the not empty tile line to left
-     */
+    /* geser line yang tidak kosong */
     private Tile[] moveLine(Tile[] oldLine) {
         LinkedList<Tile> l = new LinkedList<>();
         for (int i : _0123) {
@@ -206,9 +168,7 @@ public class Board extends JPanel {
         }
     }
 
-    /**
-     * Merge the oldLine of Tiles, then return a newLine
-     */
+    /* untuk merge line, dan return line yang baru */
     private Tile[] mergeLine(Tile[] oldLine) {
         LinkedList<Tile> list = new LinkedList<Tile>();
         for (int i = 0; i < ROW; i++) {
@@ -231,18 +191,12 @@ public class Board extends JPanel {
         return list.toArray(new Tile[4]);
     }
 
-    /**
-     * Append the empty tile to the l list of tiles, ensure it's size is s.
-     */
     private static void ensureSize(List<Tile> l, int s) {
         while (l.size() < s) {
             l.add(Tile.ZERO);
         }
     }
 
-    /**
-     * get the idx-th line.
-     */
     private Tile[] getLine(int idx) {
         Tile[] result = new Tile[4];
         for (int i : _0123) {
@@ -251,21 +205,16 @@ public class Board extends JPanel {
         return result;
     }
 
-    /**
-     * set the idx-th line. replace by the re array.
-     */
+    /* set line ke-idx, dan ganti dengan array re */
     private void setLine(int idx, Tile[] re) {
         for (int i : _0123) {
             tiles[i + idx * ROW] = re[i];
         }
     }
 
-    /* Background color */
     private static final Color BG_COLOR = new Color(0xbbada0);
-
-    /* Font */
-    private static final Font STR_FONT = new Font(Font.SANS_SERIF,
-                                                    Font.BOLD, 22);
+	
+    private static final Font STR_FONT = new Font(Font.SANS_SERIF, Font.BOLD, 22);
 
     @Override
     public void paint(Graphics g) {
@@ -294,16 +243,10 @@ public class Board extends JPanel {
         g.drawString(Integer.toString(scoreBoard), 236, 93);
     }
 
-    /* Side of the tile square */
     private static final int SIDE = 64;
 
-    /* Margin between tiles */
     private static final int MARGIN = 16;
 
-    /**
-     * Draw a tile use specific number and color in (x, y) coords, x and y need
-     * offset a bit.
-     */
     private void drawTile(Graphics g, Tile tile, int x, int y) {
         Value val = tile.value();
         int xOffset = offsetCoors(x);
@@ -314,8 +257,6 @@ public class Board extends JPanel {
         if (val.score() != 0)
             g.drawString(tile.toString(), xOffset + (SIDE >> 1) - MARGIN - 12, yOffset + (SIDE >> 1) + 128);
     }
-    
-    
 
     private static int offsetCoors(int arg) {
         return arg * (MARGIN + SIDE) + MARGIN;
